@@ -1,0 +1,28 @@
+.users{
+	float: left;
+}
+.log{
+	float: left;	
+}
+#users{
+	height: 681px;
+	width: 150px;
+}
+#log, #command, #submit{
+	margin: 2px 2px 0 2px;
+	padding: 3px;
+	width: 650px;
+}
+#log{
+	border: 1px solid #AAA;
+	margin-top: 0;
+	height: 645px;
+}
+#command{
+	width: 594px;	
+}
+#submit{
+	margin-top: 0px;
+	padding: 4px;
+	width: 44px;
+}

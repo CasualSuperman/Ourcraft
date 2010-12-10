@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Server Setup</title>
+    <link rel="stylesheet" href="main.css" />
+</head>
+<body>
+	<h1>Server Setup</h1>
+	<form action="start.oc" method="get">
+		<button type="submit" name="world" value="new">Create New World</button>
+		<span id="worlds"></span>
+		<button name="world" value="new" style="display: none"
+			onclick="getWorlds()">Use Existing World</button>
+	</form>
+	<script type="text/javascript">
+	function getWorlds(){
+	
+	}
+	function connect(){
+		if(conn.readyState === undefined || conn.ReadyState > 1){
+			conn = new WebSocket('ws://'+location.host.substr(0, location.host.length-1)+"1");
+			conn.onmessage = function(event){
+				var message = event.data
+				if(typeof message == 'array'){
+					
+				}else if(typeof message == 'boolean'){
+					if(message){
+						document.getElementById("worlds").nextSibling.style.display="";
+					}else{
+						document.getElementById("worlds").appendChild(
+							document.createTextNode("No other worlds available."));
+					}
+				}
+			}
+		}
+	}
+	conn = {};
+	if(! "WebSocket" in window){
+		alert("This browser doesn't support HTML5. Please upgrade your browser to use OurCraft's GUI.");
+	}else{
+		connect();
+	}
+	</script>
+</body>
+</html>
