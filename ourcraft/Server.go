@@ -3,7 +3,7 @@ package Server
 import(
 	Gui "./Gui"
 	"./Player"
-	"./StateHandler"
+	"./State"
 	"./World"
 )
 
@@ -15,7 +15,7 @@ type Server struct{
 }
 
 func NewServer(port int, lowmem bool, maxplayers int) *Server{
-	sh := StateHandler.NewStateHandler()
+	sh := State.NewStateHandler()
 	world := make(chan int)
 	Gui.Start(&world, sh)
 	<-world

@@ -7,14 +7,15 @@ import(
 	"io"
 	"io/ioutil"
 //	"os"
-	"./StateHandler"
+	"./State"
 	"strconv"
 	"websocket"
 )
 var world chan int
-
-func Start(ch *chan int, st *StateHandler.Handler){
+var state *State.State
+func Start(ch *chan int, st *State.State){
 	world = *ch
+	state = st
 	go http.ListenAndServe(":25560", http.HandlerFunc(httpServe))
 	go http.ListenAndServe(":25561", websocket.Handler(wssServe))
 //	os.ForkExec("http://localhost:25560/index.oc", []string{}, []string{}, "", []*os.File{})
@@ -32,23 +33,30 @@ func httpServe(c http.ResponseWriter, r *http.Request){
 }
 
 func wssServe(ws *websocket.Conn){
-	fmt.Println("Value got.")
+	fmt.Println("Socket connect")
+	ws.Write([]byte(strconv.Itoa(int(*state))))
 	b := make([]byte, 2)
 	var quit bool
 	for !quit{
 		ws.Read(b)
 		t, _ := strconv.Atoi(string(b))
+		fmt.Println(t)
 		switch t{
 			case 0: func(){
-					fmt.Println("Page 0")
-					b = make([]byte, 5)
-					ws.Read(b)
-					world, _ := strconv.Atob(string(b))
-					fmt.Println(world)
-					if(world){
-					
+					fmt.Println("Server Init")
+					if(*state > 0){
+						ws.Write([]byte(strconv.Itoa(int(*state))))
 					}else{
-					
+						ws.Write([]byte("0"))
+						b = make([]byte, 5)
+						ws.Read(b)
+						world, _ := strconv.Atob(string(b))
+						fmt.Println(world)
+						if(world){
+						
+						}else{
+						
+						}
 					}
 				}()
 			default: func(){
@@ -56,5 +64,6 @@ func wssServe(ws *websocket.Conn){
 					quit = true
 				}()
 		}
+		quit = true
 	}
 }

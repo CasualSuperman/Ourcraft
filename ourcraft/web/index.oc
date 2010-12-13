@@ -8,39 +8,52 @@
 <body>
 	<h1>Server Setup</h1>
 	<form action="start.oc" method="get">
-		<button type="submit" name="world" value="new">Create New World</button>
-		<span id="worlds"></span>
-		<button name="world" value="new" style="display: none"
+		<button type="submit" name="world" value="new">Create New World</button><span id="worlds"></span><button name="world" value="new" style="display: none"
 			onclick="getWorlds()">Use Existing World</button>
 	</form>
 	<script type="text/javascript">
+	var thisPage = 0;
 	function getWorlds(){
 	
 	}
+	var num = 0;
 	function connect(){
-		if(conn.readyState === undefined || conn.ReadyState > 1){
+		if(conn.readyState === undefined || conn.readyState > 1){
 			conn = new WebSocket('ws://'+location.host.substr(0, location.host.length-1)+"1");
 			conn.onmessage = function(event){
-				var message = event.data
-				if(typeof message == 'array'){
-					
-				}else if(typeof message == 'boolean'){
-					if(message){
-						document.getElementById("worlds").nextSibling.style.display="";
-					}else{
-						document.getElementById("worlds").appendChild(
-							document.createTextNode("No other worlds available."));
-					}
+				num++;
+				var message = event.data;
+				switch(num-1){
+					case 0:
+						if(message+0 > 0){
+							goPage(message);
+						}else{
+							document.getElementById("worlds").nextSibling.style.display="";
+						}
+						break;
+					case 1:
+						break;
 				}
-			}
+			};
 		}
+	}
+	function goPage(num){
+		var pages = {
+			0: "index.oc",
+			1: "starting.oc"
+		};
+		locatioh.href = location.href.replace(pages[thisPage], pages[num]);
 	}
 	conn = {};
 	if(! "WebSocket" in window){
 		alert("This browser doesn't support HTML5. Please upgrade your browser to use OurCraft's GUI.");
+		document.getElementById("worlds").previousSibling.disabled = "disabled";
 	}else{
 		connect();
+		//while(conn.readyState != 1){alert(conn.readyState);}
+		//conn.send(JSON.stringify(0));
 	}
+	//conn.send(JSON.stringify(0));
 	</script>
 </body>
 </html>
